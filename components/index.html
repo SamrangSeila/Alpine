@@ -72,7 +72,7 @@
         <div x-show="open"
             class="fixed flex rounded-xl justify-center items-center left-0 top-0 bottom-0 right-0 z-10 bg-black/50">
             <!-- dialog -->
-            <div @click.outside="open = false" class="w-full lg:w-1/2 bg-white rounded-xl">
+            <div @click.outside="open = false" class="w-full md:w-1/2 bg-white rounded-xl">
                 <!-- modal title -->
                 <div class="py-2 flex justify-between items-center px-4 text-lg font-semibold bg-gray-100 rounded-t-xl">
                     modal title
@@ -90,8 +90,7 @@
                 </div>
                 <!-- modal footer -->
                 <div class="py-2 px-4 text-lg font-semibold bg-gray-100 flex justify-end">
-                    <button
-                    @click="acept"
+                    <button @click="acept"
                         class="py-2 m-2 px-6 bg-blue-600 hover-bg-opacity-95 inline-flex jusity-center items-center text-white rounded-md shadow">
                         Acept
                     </button>
@@ -107,6 +106,168 @@
         </div>
     </div>
 
+    <br>
+
+    <!-- TABs -->
+    <div x-data="{tabs:['Home','Users','Settings','Orders'],activeTab:'Home'}">
+        <div class="flex">
+            <template x-for="tab in tabs">
+                <a @click="activeTab = tab" x-text="tab" class="cursor-pointer border-2 py-1 px-3 bg-white "
+                    :class="{'border-2 border-blue-500' : activeTab === tab,'text-blue-500' : activeTab === tab}">
+
+                </a>
+            </template>
+        </div>
+        <div class="py-2 px-3 bg-white">
+            <div x-show="activeTab === 'Home'" x-transition>
+                Home
+            </div>
+            <div x-show="activeTab === 'Users'" x-transition>
+                Users
+            </div>
+            <div x-show="activeTab === 'Settings'" x-transition>
+                Settings
+            </div>
+            <div x-show="activeTab === 'Orders'" x-transition>
+                Orders
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Carousel -->
+    <div x-data="{images:['./images/car2.png','./images/car.png','./images/car1.png','./images/download.png'],
+    activeImage:null,
+    prev(){
+        let index = this.images.indexOf(this.activeImage);
+        if(index === 0 ) index = this.images.length;
+        this.activeImage = this.images[index - 1];
+    },
+    next(){
+        let index = this.images.indexOf(this.activeImage);
+        if(index === this.images.length - 1 ) index = -1;
+        this.activeImage = this.images[index + 1];
+    },
+    init(){
+        this.activeImage= this.images.length > 0 ? this.images[0] : null
+    },
+}">
+        <div class="relative w-full h-[80vh] ">
+            <template x-for="image in images">
+                <div class="w-full h-full absolute flex justify-center items-center overflow-hidden">
+                    <img class="w-auto h-auto" x-show="activeImage === image" :src="image" x-transition.duration.500ms
+                        alt="">
+                </div>
+            </template>
+            <a href="#" @click.prevent="prev" class="absolute left-0 top-1/2 -translate-1/2 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-16 h-16">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </a>
+            <a href="#" @click.prevent="next" class="absolute right-0 top-1/2 -translate-1/2 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-16 h-16">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="flex">
+            <template x-for="image in images">
+                <a @click="activeImage = image" :class="{'border-purple-600 border-2' : activeImage === image}"
+                    class="cursor-pointer w-[80px] border border-gray-300 flex justify-center items-center hover:border-2 hover:border-purple-500">
+                    <img :src="image" alt="" class="object-cover"></a>
+            </template>
+
+
+        </div>
+        <!-- <img src="./images/car.png" alt=""> -->
+    </div>
+
+    <!-- Accordion -->
+    <div x-data="{
+        items:[
+            {title:'title 1',body:'body 1'},
+            {title:'title 2',body:'body 2'},
+            {title:'title 3',body:'body 3'},
+            {title:'title 4',body:'body 4'},
+        ],
+        activeItem:null
+    }">
+        <template x-for="item in items">
+            <div>
+                <div @click="activeItem = item"
+                    class="flex justify-between jusity-center font-semiboldursor-pointer hover:text-blue-400 transition-all py-1 px-2 bg-gray-200 border-2">
+                    <span x-text="item.title"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+
+                </div>
+                <div x-show="activeItem === item" x-html="item.body" class="p-2 bg-white border-2 border-blue-100"
+                    x-transition></div>
+        </template>
+    </div>
+
+    <!-- Notification -->
+    <div x-data="{
+        visible:true,
+        timeout:5000,
+        percent:0,
+        init(){
+            setTimeout(()=>{
+                this.visible = false;
+            },this.timeout)
+            const startData = Date.now();
+            const futureData = Date.now() + this.timeout;
+            const interval = setInterval(()=>{
+                const date = Date.now();
+                this.percent = (date - startData) * 100 / (futureData - startData);
+                if(this.percent >= 100)
+                {
+                    clearInterval(interval);
+                }
+            },30)
+        },
+        get percent(){
+
+        }
+    
+    }" class="py-2 px-4 bg-green-400 text-white relative">
+        <div class="font-semibold mb-2">Notification haahaa</div>
+        <div x-show="visible" x-transition.duration.500ms>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam dicta doloribus, error, asperiores
+            reiciendis aut rem molestiae, libero eveniet tempora rerum aspernatur expedita blanditiis beatae
+            voluptatibus magni eaque! Expedita, autem.
+        </div>
+        <button @click="visible = !visible"
+            class="absolute right-1 top-1 w-[30px] h-[30px] rounded-full hover:bg-red-500 transition-colors flex justify-center items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" x-transition :class="{'hidden':!visible}" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" :class="{'hidden' : visible}" x-transition fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+        </button>
+        <!-- progress -->
+        <div>
+            <div
+            class="absolute left-0 bottom-0 right-0 h-[6px] bg-black/10"
+            :class="{ 'width':`${percent}%`}"
+            >
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Popover -->
 
 </body>
 
